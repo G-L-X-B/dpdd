@@ -3,11 +3,6 @@
 
 #include "hardware.h"
 
-struct Button {
-  const byte button;
-  const byte led;
-};
-
 void setup() {
   init_hardware();
 }

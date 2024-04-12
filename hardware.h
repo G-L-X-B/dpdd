@@ -11,6 +11,11 @@
 #define BTN_LEFT_LED 3
 #define BTN_RIGHT_LED 4
 
+struct Button {
+  const byte button;
+  const byte led;
+};
+
 void init_hardware() {
   pinMode(BTN_UP, INPUT);
   pinMode(BTN_DOWN, INPUT);
@@ -25,6 +30,26 @@ void init_hardware() {
   digitalWrite(BTN_DOWN_LED, LOW);
   digitalWrite(BTN_LEFT_LED, LOW);
   digitalWrite(BTN_RIGHT_LED, LOW);
+}
+
+Button getCurrentButton() {
+  for(int i = 0; i < 4; i++) {
+    if(digitalRead(i + 2)){
+      if(debounce(i + 2)){
+        return {i + 2, i + 6};        
+      }
+    }
+    return {0, 0};
+  }
+}
+
+boolean debounce(byte button) {
+  boolean current = digitalRead(button);
+  if(!current) {
+    delay(5);
+    current = digitalRead(button);
+    return current;
+  }
 }
 
 #endif
