@@ -1,19 +1,21 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#define NO_BTN 0
 #define BTN_UP 10
 #define BTN_DOWN 11
 #define BTN_LEFT 12
 #define BTN_RIGHT 13
 
+#define NO_LED 0
 #define BTN_UP_LED 1
 #define BTN_DOWN_LED 2
 #define BTN_LEFT_LED 3
 #define BTN_RIGHT_LED 4
 
 struct Button {
-  const byte button;
-  const byte led;
+  byte button;
+  byte led;
 };
 
 void init_hardware() {
@@ -32,23 +34,23 @@ void init_hardware() {
   digitalWrite(BTN_RIGHT_LED, LOW);
 }
 
-Button getCurrentButton() {
-  for(int i = 0; i < 4; i++) {
-    if(digitalRead(i + 2)){
-      if(debounce(i + 2)){
-        return {i + 2, i + 6};        
-      }
-    }
-    return {0, 0};
-  }
-}
-
 boolean debounce(byte button) {
   boolean current = digitalRead(button);
   if(!current) {
     delay(5);
     current = digitalRead(button);
     return current;
+  }
+}
+
+Button getCurrentButton() {
+  for(byte i = 0; i < 4; i++) {
+    if(digitalRead(i + 2)) {
+      if(debounce(i + 2)) {
+        return {i + 2, i + 6};        
+      }
+    }
+    return {NO_BTN, NO_LED};
   }
 }
 
