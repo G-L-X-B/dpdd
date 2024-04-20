@@ -46,16 +46,16 @@ void init_hardware() {
   pinMode(SPEAKER, OUTPUT);
 }
 
-boolean last_signals[5] = {LOW, LOW, LOW, LOW, LOW}
+boolean last_signals[5] = {LOW, LOW, LOW, LOW, LOW};
 
 boolean debounce(byte button) {
   boolean current_signal = digitalRead(button);
   if(last_signals[button - BTN_OFFSET] != current_signal) {
     delay(5);
-    current = digitalRead(button);
-    last_signals[button - BTN_OFFSET] = current;
-    return current;
+    current_signal = digitalRead(button);
+    last_signals[button - BTN_OFFSET] = current_signal;
   }
+  return current_signal;
 }
 
 Button getCurrentButton() {
