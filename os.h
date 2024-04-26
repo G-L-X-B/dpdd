@@ -2,6 +2,7 @@
 #define OS_H
 
 #include "hardware.h"
+#include "display.h"
 
 class OS {
   private:
@@ -22,6 +23,8 @@ class OS {
     Mode mode;
     boolean mode_focused;
     #define NUM_OF_MODES = 3;
+
+    Display disp; 
 
     boolean advanceTime() {
       int curr_minute = millis() - start_time / 60000;
@@ -105,9 +108,9 @@ class OS {
           hours = digit[0]*10 + digit[1];
           minutes = digit[2]*10 + digit[3];
           if(mode == kSetAlarm) {
-            SetAlarm(hours, minutes);
+            setAlarm(hours, minutes);
           } else if (mode == kSetTime) {
-            SetTime(hours, minutes);
+            setTime(hours, minutes);
           }
           mode_focused = false;
           break;
@@ -124,13 +127,18 @@ class OS {
           digits[2] = clock_minutes / 10;
           digits[3] = clock_minutes % 10;
           break;
+        case kSetAlarm:
+          digits[0] = alarm_hours / 10;
+          digits[1] = alarm_hours % 10;
+          digits[2] = alarm_minutes / 10;
+          digits[3] = alarm_minutes % 10;
         default:
           break;
       }
       digit_focus = 0;
     }
 
-    void SetAlarm(int hours, int minutes) {
+    void setAlarm(int hours, int minutes) {
       if(alarm_hours == alarm_hours && minutes == alarm_minutes) {
         alarm_active != alarm_active;
         return;
@@ -146,6 +154,11 @@ class OS {
       clock_minutes = minutes;
       start_time = millis();
       minutes_passed = 0;
+    }
+
+    void setOffAlarm() {
+      //todo
+      alarm_active = false;
     }
 
   public:
@@ -164,11 +177,41 @@ class OS {
         processButton(curr_button);
       }
       if(time_changed || curr_button.button != NO_BTN) {
-        //update display
+        disp.updateDisplay(this);
       }
       if(time_changed && alarm_active && clock_hours == alarm_hours && clock_minutes == alarm_minutes) {
-        //set off alarm
+        setOffAlarm();
       }
+    }
+
+    void getCurrentDigits(int current_digits[]) {
+      if(mode_focused) {
+        current_digits[0] = digits[0];
+        current_digits[1] = digits[1];
+        current_digits[2] = digits[2];
+        current_digits[3] = digits[3];
+      } else {
+        current_digits[0] = clock_hours / 10;
+        current_digits[1] = clock_hours % 10;
+        current_digits[2] = clock_minutes / 10;
+        current_digits[3] = clock_minutes % 10;
+      }
+    }
+
+    bool isFocused() {
+      return mode_focused;
+    }
+
+    int getCurrentDigitFocus() {
+      if(mode_focused) {
+        return digit_focus;
+      } else {
+        return -1;
+      }
+    }
+
+    bool isAlarmActive() {
+      return alarm_active;
     }
 }
 #endif 

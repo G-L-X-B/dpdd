@@ -1,6 +1,8 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#include <OLED_I2C.h>
+
 #define LED_OFFSET 2
 
 #define NO_BTN 0
@@ -20,7 +22,15 @@
 #define BTN_CONTROL 11
 
 #define SPEAKER 12
-#define OLED 13
+#define OLED_P 13
+
+
+// Arduino Uno/2009:
+// ----------------------
+// Display:  SDA pin   -> Arduino Analog 4 or the dedicated SDA pin
+//           SCL pin   -> Arduino Analog 5 or the dedicated SCL pin
+OLED myOLED(SDA, SCL, OLED_P);
+extern uint8_t BigNumbers[];
 
 struct Button {
   byte button;
@@ -44,6 +54,9 @@ void init_hardware() {
   digitalWrite(BTN_RIGHT_LED, LOW);
   
   pinMode(SPEAKER, OUTPUT);
+
+  myOLED.begin();
+  myOLED.setFont(BigNumbers);
 }
 
 boolean last_signals[5] = {LOW, LOW, LOW, LOW, LOW};
