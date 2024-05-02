@@ -2,6 +2,7 @@
 #define HARDWARE_H
 
 #include <OLED_I2C.h>
+#include <I2C_RTC.h>
 
 #define LED_OFFSET 2
 
@@ -29,6 +30,7 @@
 // ----------------------
 // Display:  SDA pin   -> Arduino Analog 4 or the dedicated SDA pin
 //           SCL pin   -> Arduino Analog 5 or the dedicated SCL pin
+extern DS3231 RTC;
 extern OLED myOLED;
 extern uint8_t BigNumbers[];
 

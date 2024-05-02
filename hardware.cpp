@@ -2,6 +2,8 @@
 
 OLED myOLED(SDA, SCL, OLED_P);
 
+static DS3231 RTC;
+
 boolean last_signals[5] = {LOW, LOW, LOW, LOW, LOW};
 
 void init_hardware() {
@@ -20,6 +22,9 @@ void init_hardware() {
   digitalWrite(BTN_RIGHT_LED, LOW);
   
   pinMode(SPEAKER, OUTPUT);
+
+  RTC.begin();
+  RTC.setHourMode(CLOCK_H24);
 
   myOLED.begin();
   myOLED.setFont(BigNumbers);

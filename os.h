@@ -11,10 +11,8 @@ enum Mode {
 
 class OS {
   private:
-    long start_time;
     int clock_hours;
     int clock_minutes;
-    int minutes_passed;
 
     int alarm_hours;
     int alarm_minutes;

@@ -2,13 +2,9 @@
 #include "display.h"
 
 boolean OS::advanceTime() {
-  int curr_minute = (millis() - start_time) / 60000;
-  if(curr_minute != minutes_passed) {
-    minutes_passed = curr_minute;
-    clock_minutes = (clock_minutes + 1) % 60;
-    if(clock_minutes == 0) {
-      clock_hours = (clock_hours + 1) % 24;
-    }
+  if(clock_minutes != RTC.getMinutes() || clock_hours != RTC.getHours()) {
+    clock_minutes = RTC.getMinutes();
+    clock_hours = RTC.getHours();
     return true;
   }
   return false;
@@ -154,10 +150,9 @@ void OS::setAlarm(int hours, int minutes) {
 }
 
 void OS::setTime(int hours, int minutes) {
-  clock_hours = hours;
   clock_minutes = minutes;
-  start_time = millis() - 1;
-  minutes_passed = 0;
+  clock_hours = hours;
+  RTC.setTime(hours, minutes, 0);
 }
 
 void OS::setOffAlarm() {
@@ -170,10 +165,8 @@ void OS::setOffAlarm() {
 }
 
 OS::OS() {
-  start_time = millis();
-  clock_hours = 0;
-  clock_minutes = 0;      
-  minutes_passed = 0;
+  clock_hours = RTC.getHours();
+  clock_minutes = RTC.getMinutes();
 
   alarm_hours = 0;
   alarm_minutes = 0;
