@@ -165,8 +165,8 @@ void OS::setOffAlarm() {
 }
 
 OS::OS() {
-  clock_hours = RTC.getHours();
-  clock_minutes = RTC.getMinutes();
+  clock_hours = 0;
+  clock_minutes = 0;
 
   alarm_hours = 0;
   alarm_minutes = 0;
