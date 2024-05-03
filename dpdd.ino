@@ -7,7 +7,6 @@ OS os;
 
 void setup() {
   init_hardware();
-  Display::updateDisplay(&os);
 }
 
 void loop() {

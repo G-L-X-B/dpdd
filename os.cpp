@@ -165,8 +165,8 @@ void OS::setOffAlarm() {
 }
 
 OS::OS() {
-  clock_hours = 0;
-  clock_minutes = 0;
+  clock_hours = -1;
+  clock_minutes = -1;
 
   alarm_hours = 0;
   alarm_minutes = 0;
