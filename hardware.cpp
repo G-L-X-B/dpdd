@@ -35,17 +35,16 @@ boolean debounce(byte button) {
   if(last_signals[button - BTN_OFFSET] != current_signal) {
     delay(5);
     current_signal = digitalRead(button);
-    //last_signals[button - BTN_OFFSET] = current_signal;
+    last_signals[button - BTN_OFFSET] = current_signal;
   }
   return current_signal;
 }
 
 Button getCurrentButton() {
   for(byte i = 0; i < 5; i++) {
-    boolean db = debounce(i + BTN_OFFSET);
     boolean ls = last_signals[i];
-    last_signals[i] = db;
-    if(db && (ls == LOW)) {
+    boolean db = debounce(i + BTN_OFFSET);
+    if(db && !ls) {
       return {i + BTN_OFFSET, i + LED_OFFSET, 300}; 
     }
   }
