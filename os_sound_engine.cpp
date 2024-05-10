@@ -43,9 +43,10 @@ void OSSoundEngine::stop_alarm() {
   noTone(SPEAKER);  
 }
 
+//int button_pitches[5] = {NOTE_G4, NOTE_GS4, NOTE_A4, NOTE_AS4, NOTE_B4};
 void OSSoundEngine::button_sound(Button button) {
   if(!alarm_ringing) {
-    tone(SPEAKER, button.pitch, BUTTON_SOUND_DURATION);    
+    tone(SPEAKER, button_pitches[button.button - BTN_OFFSET], BUTTON_SOUND_DURATION);    
   }
 }
 
