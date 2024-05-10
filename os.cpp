@@ -1,5 +1,6 @@
 #include "os.h"
 #include "display.h"
+#include "os_sound_engine.h"
 
 boolean OS::advanceTime() {
   if(clock_minutes != RTC.getMinutes() || clock_hours != RTC.getHours()) {
@@ -120,7 +121,7 @@ void OS::processButtonAlarm(Button button) {
   for(int i = 0; i < 5; i++) {
     digitalWrite(i + LED_OFFSET, LOW);
   }
-  //todo: stop ringing
+  sound.stop_alarm();
   bool game_win = true; //todo: call game
 
   if(game_win) {
@@ -159,7 +160,7 @@ void OS::setOffAlarm() {
   for(int i = 0; i < 5; i++) {
     digitalWrite(i + LED_OFFSET, HIGH);
   }
-  //todo: start ringing
+  sound.start_alarm();
   alarm_ringing = true;  
   alarm_active = false;
 }
@@ -177,9 +178,12 @@ OS::OS() {
 }
 
 void OS::loop() {
+  sound.loop();
+  
   bool time_changed = advanceTime();
   Button curr_button = getCurrentButton();
   if(curr_button.button != NO_BTN) {
+    sound.button_sound(curr_button);
     processButton(curr_button);
   }
   if(time_changed && alarm_active && clock_hours == alarm_hours && clock_minutes == alarm_minutes) {

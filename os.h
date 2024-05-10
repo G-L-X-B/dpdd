@@ -2,6 +2,7 @@
 #define OS_H
 
 #include "hardware.h"
+#include "os_sound_engine.h"
 
 enum Mode { 
   kClock, 
@@ -11,6 +12,7 @@ enum Mode {
 
 class OS {
   private:
+    OSSoundEngine sound;
     int clock_hours;
     int clock_minutes;
 
