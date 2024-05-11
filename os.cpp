@@ -165,6 +165,7 @@ void OS::setTime(int hours, int minutes) {
 
 void OS::setOffAlarm() {
   for(int i = 0; i < 5; i++) {
+    lit_buttons[i] = false;
     digitalWrite(i + LED_OFFSET, HIGH);
   }
   sound.start_alarm();
@@ -186,10 +187,7 @@ OS::OS() {
 
 void OS::loop() {  
   bool time_changed = advanceTime();
-  Button curr_button = getCurrentButton();
-    
-  sound.loop();
-  
+  Button curr_button = getCurrentButton();  
   bool button_processed = false;
 
   if(curr_button.button != NO_BTN) {
@@ -218,6 +216,8 @@ void OS::loop() {
   if(time_changed || curr_button.button != NO_BTN) { 
     Display::updateDisplay(this);
   }
+  
+  sound.loop();
 }
 
 void OS::getCurrentDigits(int current_digits[]) {
