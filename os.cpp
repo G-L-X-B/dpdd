@@ -11,37 +11,37 @@ boolean OS::advanceTime() {
   return false;
 }
 
-void OS::processButton(Button button) {
+bool OS::processButton(Button button) {  
   if(alarm_ringing) {
-    processButtonAlarm(button);
+    return processButtonAlarm(button);
   } else if(mode_focused) {
-    processButtonFocused(button);
-  } else {
-    switch(button.button) {
-      case BTN_DOWN:
-        mode = (mode + 1) % NUM_OF_MODES;
-        break;
-      case BTN_UP:
-        if(mode == 0){
-          mode = NUM_OF_MODES - 1;
-        } else {
-          mode = mode - 1;
-        }
-        break;
-      case BTN_CONTROL:
-        if(mode != kClock) {              
-          mode_focused = true;
-          initFocus();
-        }
-        break;
-      default:
-        break;
-    }
+    return processButtonFocused(button);
   }
+  switch(button.button) {
+    case BTN_DOWN:
+      mode = (mode + 1) % NUM_OF_MODES;
+      break;
+    case BTN_UP:
+      if(mode == 0){
+        mode = NUM_OF_MODES - 1;
+      } else {
+        mode = mode - 1;
+      }
+      break;
+    case BTN_CONTROL:
+      if(mode != kClock) {              
+        mode_focused = true;
+        initFocus();
+        break;
+      }
+    default:
+      return false;
+  }
+  return true;
 }
 
-void OS::processButtonFocused(Button button) {
-  switch(button.button) {
+bool OS::processButtonFocused(Button button) {
+  switch(button.button) {     
     case BTN_RIGHT:
       digit_focus = (digit_focus+1) % 4;
       break;
@@ -76,21 +76,24 @@ void OS::processButtonFocused(Button button) {
       } else {
         digits[digit_focus]--;
       }
-      break;
+      break;      
       
     case BTN_CONTROL:
-      int hours = digits[0]*10 + digits[1];
-      int minutes = digits[2]*10 + digits[3];
+      //for some reason code doesnt work if I declare variables inside of a switch
+      //int hours = digits[0]*10 + digits[1];
+      //int minutes = digits[2]*10 + digits[3];
       if(mode == kSetAlarm) {
-        setAlarm(hours, minutes);
+        setAlarm(digits[0]*10 + digits[1], digits[2]*10 + digits[3]);
       } else if (mode == kSetTime) {
-        setTime(hours, minutes);
+        setTime(digits[0]*10 + digits[1], digits[2]*10 + digits[3]);
       }
       mode_focused = false;
       break;
+      
     default:
-      break;
+      return false;
   }
+  return true;
 }
 
 void OS::initFocus() {
@@ -112,7 +115,10 @@ void OS::initFocus() {
   digit_focus = 0;
 }
 
-void OS::processButtonAlarm(Button button) {
+bool OS::processButtonAlarm(Button button) {
+  if(button.button == NO_BTN) {
+    return false;
+  }
   if(!alarm_delayed) {
     og_alarm_hours = alarm_hours;
     og_alarm_minutes = alarm_minutes;
@@ -138,6 +144,7 @@ void OS::processButtonAlarm(Button button) {
     }
   }
   alarm_active = true;
+  return false;
 }
 
 void OS::setAlarm(int hours, int minutes) {
@@ -177,19 +184,38 @@ OS::OS() {
   mode_focused = false;
 }
 
-void OS::loop() {
-  sound.loop();
-  
+void OS::loop() {  
   bool time_changed = advanceTime();
   Button curr_button = getCurrentButton();
+    
+  sound.loop();
+  
+  bool button_processed = false;
+
   if(curr_button.button != NO_BTN) {
-    sound.button_sound(curr_button);
-    processButton(curr_button);
+    button_processed = processButton(curr_button);
   }
+
+  if(button_processed) {
+    //sound.button_sound(curr_button);
+    sound.button_sound_persistent(curr_button);    
+    lit_buttons[curr_button.button - BTN_OFFSET] = true;
+    digitalWrite(curr_button.led, HIGH);
+  }
+
+  for(int i = 0; i < 5; i++) {
+    if(lit_buttons[i] && !last_signals[i]) {
+      lit_buttons[i] = false;
+      digitalWrite(i + LED_OFFSET, LOW);      
+    }
+  }
+  
   if(time_changed && alarm_active && clock_hours == alarm_hours && clock_minutes == alarm_minutes) {
     setOffAlarm();
   }
-  if(time_changed || curr_button.button != NO_BTN) {
+  
+  //cant use button_processed here because when you turn off the alarm button is not considered processed but you still need to update display
+  if(time_changed || curr_button.button != NO_BTN) { 
     Display::updateDisplay(this);
   }
 }

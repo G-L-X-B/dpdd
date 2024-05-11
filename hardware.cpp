@@ -41,9 +41,6 @@ boolean debounce(byte button) {
 }
 
 Button getCurrentButton() {
-  for(int i = 0; i < 5; i++) {
-    digitalWrite(i + LED_OFFSET, digitalRead(i + BTN_OFFSET));
-  }
   for(byte i = 0; i < 5; i++) {
     boolean ls = last_signals[i];
     boolean db = debounce(i + BTN_OFFSET);
