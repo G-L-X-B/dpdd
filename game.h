@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "dislpay.h"
 #include "hardware.h"
 #include "os_sound_engine.h"
 
@@ -8,10 +9,16 @@
 #define LIT_DURATION 500
 #define MID_LED_DELAY 200
 #define LOOP_DELAY 1000
+#define INTRO_DELAY 2000
+
+#define LINE_DELAY 3000
 
 #define INPUT_WAIT 60000
 
+#define INTRO_LINE_NUM 8
+
 enum GameFSM {
+  kIntro,    // The very beginning. Tell the rules, immediately start playing on user input.
   kStart,    // New level, increment level and proceed playing.
   kDemo,     // The player hasn't started to entering sequence yet.
              // Loop the demo and await input for INPUT_WAIT.
@@ -39,8 +46,10 @@ public:
   }
 private:
   void setupGame() {
-    state = kStart;
+    state = kIntro;
     demo_state = kLEDDown;
+    press_lit = NO_LED;
+    line = 0;
     lit = 0;
     lvl = 0; // will be set to 1 one the first iteration
     startTime = millis();
@@ -54,7 +63,11 @@ private:
     while (true) {
       elapsed = millis() - startTime;
       pending = getCurrentButton();
+      processPressedButton(pending);
       switch (state) {
+        case kIntro:
+          playIntro(elapsed);
+          break;
         case kStart:
           if (++lvl > MAX_SEQ) {
             state = kFinish;
@@ -76,18 +89,47 @@ private:
           break;
         case kSuccess:
           lit = 0;
+          Display::writeLine(success_line);
+          delay(LINE_DELAY);
+          state = kStart;
           break;
         case kFail:
+          Display::writeLine(fail_line);
+          delay(LINE_DELAY);
           return false;
         case kFinish:
+          Display::writeLine(finish_line);
+          delay(LINE_DELAY);
           return true;
       }
+      sound_engine->loop();
     }
+  }
+
+  inline void processPressedButton(Button button) {
+      if (pending.led != NO_LED) {
+        press_lit = pending.led;
+        digitalWrite(press_lit, HIGH);
+        sound_engine->button_sound_persistent(button);
+      } else if (press_lit != NO_LED) {
+        digitalWrite(press_lit, LOW);
+        press_lit = NO_LED;
+      }
   }
 
   void generate() {
     for (byte i = 0; i < MAX_SEQ; ++i) {
       sequence[i] = rand() % 4;
+    }
+  }
+
+  void playIntro(unsigned int elapsed) {
+    if (elapsed < INTRO_DELAY) return;
+
+    if (line >= INTRO_LINE_NUM) {
+      state = kStart;
+    } else {
+      Display::writeLine(intro_lines[line++];
     }
   }
 
@@ -119,6 +161,7 @@ private:
     for (int i = 0; i < 4; ++i)
       digitalWrite(BTN_LED_UP + i, LOW);
     lit = 0;
+    demo_state = kLEDDown;
   }
 
   void input(unsigned int elapsed) {
@@ -136,14 +179,30 @@ private:
     }
   }
 
+  String intro_lines[INTRO_LINE_NUM] = {
+    "Henlo!",
+    "To disable the alarm",
+    "You have to beat",
+    "The Game",
+    "Watch the order",
+    "in which buttons are lit",
+    "and repeat it.",
+    "GL HF;)"
+  }
+
+  String success_line = "Ok, what's next!?";
+  String fail_line = "OMG u suck";
+  String finish_line = "Are you good or am I bad?";
   OSSoundEngine *sound_engine;
   byte sequence[MAX_SEQ] = {0};
   Button pending;
   unsigned int startTime;
   GameFSM state;
   DemoFSM demo_state;
+  int press_lit;
   byte lit;
   byte lvl;
+  byte line;
 } Game;
 
 #endif

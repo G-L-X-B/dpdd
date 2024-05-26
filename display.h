@@ -27,6 +27,8 @@ class Display {
     
   public:  
     static void updateDisplay(OS* os);
+
+    static void writeLine(String line);
 };
 
 #endif

@@ -61,3 +61,9 @@ void Display::updateDisplay(OS* os) {
   }
   myOLED.update();
 }
+
+void Display::writeLine(String line) {
+  myOLED.clrScr();
+  myOLED.print(line, CENTER, CENTER);
+  myOLED.update();
+}
