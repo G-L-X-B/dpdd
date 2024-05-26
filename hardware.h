@@ -1,6 +1,9 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#include <OLED_I2C.h>
+#include <I2C_RTC.h>
+
 #define LED_OFFSET 2
 
 #define NO_BTN 0
@@ -20,7 +23,16 @@
 #define BTN_CONTROL 11
 
 #define SPEAKER 12
-#define OLED 13
+#define OLED_P 13
+
+
+// Arduino Uno/2009:
+// ----------------------
+// Display:  SDA pin   -> Arduino Analog 4 or the dedicated SDA pin
+//           SCL pin   -> Arduino Analog 5 or the dedicated SCL pin
+extern DS3231 RTC;
+extern OLED myOLED;
+extern uint8_t BigNumbers[];
 
 struct Button {
   byte button;
@@ -28,43 +40,12 @@ struct Button {
   int pitch;
 };
 
-void init_hardware() {
-  pinMode(BTN_UP, INPUT);
-  pinMode(BTN_DOWN, INPUT);
-  pinMode(BTN_LEFT, INPUT);
-  pinMode(BTN_RIGHT, INPUT);
+void init_hardware();
 
-  pinMode(BTN_UP_LED, OUTPUT);
-  pinMode(BTN_DOWN_LED, OUTPUT);
-  pinMode(BTN_LEFT_LED, OUTPUT);
-  pinMode(BTN_RIGHT_LED, OUTPUT);
-  digitalWrite(BTN_UP_LED, LOW);
-  digitalWrite(BTN_DOWN_LED, LOW);
-  digitalWrite(BTN_LEFT_LED, LOW);
-  digitalWrite(BTN_RIGHT_LED, LOW);
-  
-  pinMode(SPEAKER, OUTPUT);
-}
+extern boolean last_signals[5];
 
-boolean last_signals[5] = {LOW, LOW, LOW, LOW, LOW}
+boolean debounce(byte button);
 
-boolean debounce(byte button) {
-  boolean current_signal = digitalRead(button);
-  if(last_signals[button - BTN_OFFSET] != current_signal) {
-    delay(5);
-    current = digitalRead(button);
-    last_signals[button - BTN_OFFSET] = current;
-    return current;
-  }
-}
-
-Button getCurrentButton() {
-  for(byte i = 0; i < 5; i++) {
-    if(debounce(i + BTN_OFFSET) && (last_signals[i] == LOW)) {
-      return {i + BTN_OFFSET, i + LED_OFFSET, 300}; 
-    }
-    return {NO_BTN, NO_LED, 0};
-  }
-}
+Button getCurrentButton();
 
 #endif
