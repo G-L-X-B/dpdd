@@ -27,7 +27,6 @@ void init_hardware() {
   RTC.setHourMode(CLOCK_H24);
 
   myOLED.begin();
-  myOLED.setFont(BigNumbers);
 }
 
 boolean debounce(byte button) {

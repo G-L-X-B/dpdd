@@ -43,6 +43,8 @@ void Display::drawModeIndicator(int current_mode, int num_of_modes) {
 }
 
 void Display::updateDisplay(OS* os) {
+  myOLED.setFont(BigNumbers);
+  
   int current_digits[4];
   os->getCurrentDigits(current_digits);
   int mode = os->getCurrentMode();
@@ -62,8 +64,40 @@ void Display::updateDisplay(OS* os) {
   myOLED.update();
 }
 
-void Display::writeLine(String line) {
+void Display::writeCurrLevel(int curr_level, int max_level) {
+  myOLED.setFont(SmallFont);
   myOLED.clrScr();
-  myOLED.print(line, CENTER, CENTER);
+  myOLED.print("Level: ", 63 - 5 * TEXT_FONT_XSIZE, 31 - TEXT_FONT_YSIZE / 2);
+  myOLED.printNumI(curr_level, 63 + 2 * TEXT_FONT_XSIZE,31 - TEXT_FONT_YSIZE / 2);
+  myOLED.print("/", 63 + 3 * TEXT_FONT_XSIZE,31 - TEXT_FONT_YSIZE / 2);
+  myOLED.printNumI(max_level, 63 + 4 * TEXT_FONT_XSIZE,31 - TEXT_FONT_YSIZE / 2);
+  myOLED.update();
+}
+
+void Display::failLevelMessage() {
+  myOLED.setFont(SmallFont);
+  myOLED.clrScr();
+  myOLED.print("Level failed.", 63 - 13 * TEXT_FONT_XSIZE / 2, 31 - TEXT_FONT_YSIZE / 2);
+  myOLED.update();  
+}
+
+void Display::successLevelMessage() {
+  myOLED.setFont(SmallFont);
+  myOLED.clrScr();
+  myOLED.print("Level success!", 63 - 7 * TEXT_FONT_XSIZE, 31 - TEXT_FONT_YSIZE / 2);
+  myOLED.update();  
+}
+
+void Display::timeoutMessage() {
+  myOLED.setFont(SmallFont);
+  myOLED.clrScr();
+  myOLED.print("Game lost.", 63 - 5 * TEXT_FONT_XSIZE, 31 - TEXT_FONT_YSIZE / 2);
+  myOLED.update();
+}
+
+void Display::finishMessage() {
+  myOLED.setFont(SmallFont);
+  myOLED.clrScr();
+  myOLED.print("Congratulations!", 63 - 8 * TEXT_FONT_XSIZE, 31 - TEXT_FONT_YSIZE / 2);
   myOLED.update();
 }
