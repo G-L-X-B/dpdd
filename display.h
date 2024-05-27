@@ -9,6 +9,9 @@
 #define FONT_YSIZE 24
 #define FONT_INBETWEEN 4
 
+#define TEXT_FONT_XSIZE 6
+#define TEXT_FONT_YSIZE 8
+
 #define ARROW_HALFSIZE 5
 #define ARROW_MARGIN 15
 
@@ -27,6 +30,16 @@ class Display {
     
   public:  
     static void updateDisplay(OS* os);
+
+    static void writeCurrLevel(int curr_level, int max_level);
+
+    static void failLevelMessage();
+    
+    static void successLevelMessage();
+    
+    static void timeoutMessage();
+    
+    static void finishMessage();
 };
 
 #endif

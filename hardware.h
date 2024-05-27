@@ -33,6 +33,7 @@
 extern DS3231 RTC;
 extern OLED myOLED;
 extern uint8_t BigNumbers[];
+extern uint8_t SmallFont[];
 
 struct Button {
   byte button;

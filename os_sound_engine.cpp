@@ -52,6 +52,12 @@ void OSSoundEngine::button_sound(Button button) {
   }
 }
 
+void OSSoundEngine::button_sound(int button, int duration) {
+  if(!alarm_ringing) {
+    tone(SPEAKER, button_pitches[button - BTN_OFFSET], duration);    
+  }
+}
+
 void OSSoundEngine::button_sound_persistent(Button button) {
   if(!alarm_ringing && button.button != NO_BTN) {
     tone(SPEAKER, button_pitches[button.button - BTN_OFFSET]);

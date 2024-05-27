@@ -26,6 +26,8 @@ class OSSoundEngine {
     void stop_alarm();
 
     void button_sound(Button button);
+    
+    void button_sound(int button, int duration);
 
     void button_sound_persistent(Button button);
 

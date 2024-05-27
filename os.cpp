@@ -1,4 +1,5 @@
 #include "os.h"
+#include "game.h"
 #include "display.h"
 #include "os_sound_engine.h"
 
@@ -128,7 +129,8 @@ bool OS::processButtonAlarm(Button button) {
     digitalWrite(i + LED_OFFSET, LOW);
   }
   sound.stop_alarm();
-  bool game_win = true; //todo: call game
+  Game.setSoundEngine(&sound);
+  bool game_win = Game.play(); //todo: call game
 
   if(game_win) {
     alarm_delayed = false;

@@ -1,6 +1,4 @@
 #include "hardware.h"
-#include "display.h"
-#include "game.h"
 #include "os.h"
 
 OS os;
@@ -10,5 +8,5 @@ void setup() {
 }
 
 void loop() {
-  os.loop();  
+  os.loop();
 }
