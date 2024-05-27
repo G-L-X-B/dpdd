@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "dislpay.h"
+#include "display.h"
 #include "hardware.h"
 #include "os_sound_engine.h"
 
@@ -129,7 +129,7 @@ private:
     if (line >= INTRO_LINE_NUM) {
       state = kStart;
     } else {
-      Display::writeLine(intro_lines[line++];
+      Display::writeLine(intro_lines[line++]);
     }
   }
 
@@ -159,7 +159,7 @@ private:
 
   void endDemo() {
     for (int i = 0; i < 4; ++i)
-      digitalWrite(BTN_LED_UP + i, LOW);
+      digitalWrite(LED_OFFSET + i, LOW);
     lit = 0;
     demo_state = kLEDDown;
   }
@@ -188,7 +188,7 @@ private:
     "in which buttons are lit",
     "and repeat it.",
     "GL HF;)"
-  }
+  };
 
   String success_line = "Ok, what's next!?";
   String fail_line = "OMG u suck";

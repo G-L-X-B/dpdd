@@ -3,12 +3,15 @@
 #include "game.h"
 #include "os.h"
 
-OS os;
+//OS os;
+OSSoundEngine sound;
 
 void setup() {
   init_hardware();
+  Game.setSoundEngine(&sound);
+  bool game_win = Game.play();
 }
 
 void loop() {
-  os.loop();  
+  //os.loop();  
 }
